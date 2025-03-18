@@ -24,18 +24,30 @@ Este documento descreve os problemas mais comuns encontrados durante a execuçã
      source ~/.bashrc
      ```
 
-### Maven não foi encontrado
+### Gradle Wrapper não está funcionando
 
-**Problema**: Erro "mvn: command not found" ou "'mvn' não é reconhecido como um comando interno ou externo"
+**Problema**: Erro ao executar o Gradle Wrapper (`gradlew` ou `gradlew.bat`)
 
 **Solução**:
-1. Instale o Maven
-   - Windows: [Download Maven](https://maven.apache.org/download.cgi)
-   - Linux: `sudo apt install maven`
-   - macOS: `brew install maven`
-2. Configure as variáveis de ambiente (Windows):
-   - Adicione `MAVEN_HOME` nas variáveis de ambiente (ex: `C:\Program Files\Apache\maven`)
-   - Adicione `%MAVEN_HOME%\bin` ao `Path`
+1. Verifique se o arquivo tem permissão de execução (Linux/macOS):
+   ```bash
+   chmod +x gradlew
+   ```
+2. Tente baixar novamente o wrapper:
+   ```bash
+   # Windows (requer curl)
+   curl -o gradlew.bat https://raw.githubusercontent.com/gradle/gradle/master/gradlew.bat
+   
+   # Linux/macOS
+   curl -o gradlew https://raw.githubusercontent.com/gradle/gradle/master/gradlew
+   chmod +x gradlew
+   ```
+3. Se o problema persistir, instale o Gradle manualmente:
+   - Windows: [Download Gradle](https://gradle.org/install/)
+   - Linux: `sudo apt install gradle`
+   - macOS: `brew install gradle`
+   
+   E use o comando `gradle` em vez de `gradlew`.
 
 ## Problemas Durante a Execução dos Testes
 
@@ -47,7 +59,7 @@ Este documento descreve os problemas mais comuns encontrados durante a execuçã
 1. Verifique se o navegador está instalado (Chrome ou Firefox)
 2. Atualize o WebDriverManager:
    ```bash
-   mvn versions:use-latest-versions -DallowSnapshots=true -DallowMajorUpdates=false -Dincludes=io.github.bonigarcia:webdrivermanager
+   ./gradlew --refresh-dependencies
    ```
 3. Se o erro persistir, baixe o driver manualmente:
    - [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
@@ -90,7 +102,7 @@ Este documento descreve os problemas mais comuns encontrados durante a execuçã
    options.setCapability("proxy", proxy);
    ```
 
-## Problemas com Maven
+## Problemas com Gradle
 
 ### Erro ao baixar dependências
 
@@ -98,18 +110,28 @@ Este documento descreve os problemas mais comuns encontrados durante a execuçã
 
 **Solução**:
 1. Verifique sua conexão com a internet
-2. Limpe o cache do Maven:
+2. Limpe o cache do Gradle:
    ```bash
-   mvn dependency:purge-local-repository
+   # Windows
+   gradlew cleanBuildCache
+   
+   # Linux/macOS
+   ./gradlew cleanBuildCache
    ```
-3. Use um repositório Maven alternativo no arquivo pom.xml:
-   ```xml
-   <repositories>
-       <repository>
-           <id>maven-central-alternative</id>
-           <url>https://repo1.maven.org/maven2</url>
-       </repository>
-   </repositories>
+3. Force o Gradle a baixar as dependências novamente:
+   ```bash
+   # Windows
+   gradlew --refresh-dependencies
+   
+   # Linux/macOS
+   ./gradlew --refresh-dependencies
+   ```
+4. Use um repositório alternativo no arquivo build.gradle:
+   ```groovy
+   repositories {
+       mavenCentral()
+       maven { url "https://repo1.maven.org/maven2" }
+   }
    ```
 
 ### Erros ao executar os testes
@@ -118,13 +140,21 @@ Este documento descreve os problemas mais comuns encontrados durante a execuçã
 
 **Solução**:
 1. Verifique se o JDK está configurado corretamente
-2. Force o Maven a usar um JDK específico:
+2. Force o Gradle a usar um JDK específico:
    ```bash
    # Windows
-   mvn clean test -Dmaven.compiler.fork=true -Dmaven.compiler.executable="C:\Program Files\Java\jdk-11.0.XX\bin\javac"
+   gradlew clean test -Dorg.gradle.java.home="C:\Program Files\Java\jdk-11.0.XX"
    
    # Linux/macOS
-   mvn clean test -Dmaven.compiler.fork=true -Dmaven.compiler.executable="/usr/lib/jvm/java-11-openjdk/bin/javac"
+   ./gradlew clean test -Dorg.gradle.java.home="/usr/lib/jvm/java-11-openjdk"
+   ```
+3. Tente limpar o projeto e reconstruir:
+   ```bash
+   # Windows
+   gradlew clean build
+   
+   # Linux/macOS
+   ./gradlew clean build
    ```
 
 ## Problemas com Allure Reports
@@ -143,12 +173,20 @@ Este documento descreve os problemas mais comuns encontrados durante a execuçã
      sudo apt-get install allure
      ```
    - macOS: `brew install allure`
-2. Se o problema persistir, use os relatórios TestNG padrão em `target/surefire-reports/index.html`
+2. Use o plugin Allure do Gradle diretamente:
+   ```bash
+   # Windows
+   gradlew allureReport allureServe
+   
+   # Linux/macOS
+   ./gradlew allureReport allureServe
+   ```
+3. Se o problema persistir, use os relatórios TestNG padrão em `build/reports/tests/test/index.html`
 
 ## Contato e Suporte
 
 Se o problema persistir ou não estiver listado aqui, abra uma issue no repositório com:
 - Descrição detalhada do problema
 - Logs completos do erro
-- Ambiente de execução (SO, versão do Java, versão do Maven)
+- Ambiente de execução (SO, versão do Java, versão do Gradle)
 - Passos para reproduzir o problema 

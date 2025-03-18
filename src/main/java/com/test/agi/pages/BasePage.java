@@ -16,7 +16,7 @@ public class BasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
     protected static final Logger logger = LogManager.getLogger(BasePage.class);
-    protected static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);
+    protected static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(20);
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
@@ -95,5 +95,12 @@ public class BasePage {
     protected void waitForPageLoad() {
         wait.until(webDriver -> ((JavascriptExecutor) webDriver)
                 .executeScript("return document.readyState").equals("complete"));
+    }
+
+    /**
+     * Espera até que um elemento seja visível e retorna o WebElement
+     */
+    protected WebElement waitForElement(By locator) {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 } 

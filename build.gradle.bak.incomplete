@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.test.agi'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jcenter.bintray.com' }
+    maven { url 'https://repo.maven.apache.org/maven2/' }
+}
+
+dependencies {
+    implementation 'org.seleniumhq.selenium:selenium-java:4.18.1'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
+    implementation 'org.testng:testng:7.9.0'
+    implementation 'io.qameta.allure:allure-testng:2.25.0'
+    implementation 'ch.qos.logback:logback-classic:1.4.14'
+    implementation 'commons-io:commons-io:2.15.1'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.22.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.22.1'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.1'
+}
+
+test {
+    useTestNG() {
+        useDefaultListeners = true
+        suites file('src/test/resources/testng.xml')
+    }
+    systemProperties = System.properties
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.slf4j:slf4j-api:1.7.36'
+        force 'org.apache.commons:commons-lang3:3.14.0'
+        force 'org.apache.commons:commons-compress:1.26.0'
+        force 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+        force 'com.google.guava:guava:33.0.0-jre'
+        force 'commons-io:commons-io:2.15.1'
+    }
+}

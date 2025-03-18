@@ -19,17 +19,20 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-        cache: maven
+        cache: gradle
     
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    
+    - name: Build with Gradle
+      run: ./gradlew build -x test
     
     - name: Run Tests (Headless)
-      run: mvn clean test -Dbrowser=chrome-headless
+      run: ./gradlew test -Dbrowser=chrome-headless
     
     - name: Generate Allure Report
       if: always()
-      run: mvn allure:report
+      run: ./gradlew allureReport
     
     - name: Archive Test Results
       if: always()
@@ -37,6 +40,6 @@ jobs:
       with:
         name: test-results
         path: |
-          target/surefire-reports/
-          target/allure-results/
+          build/reports/tests/
+          build/allure-results/
           logs/ 

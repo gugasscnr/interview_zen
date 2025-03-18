@@ -17,16 +17,49 @@ echo "Java encontrado. Verificando versão..."
 java -version
 echo
 
-# Verificar se o Maven está instalado
-echo "Verificando instalação do Maven..."
-if ! command -v mvn &> /dev/null; then
-    echo "Maven não encontrado. Por favor, instale o Maven 3.6 ou superior."
-    echo "Ubuntu/Debian: sudo apt install maven"
-    echo "macOS: brew install maven"
-    exit 1
+# Verificar se o Gradle está instalado
+echo "Verificando instalação do Gradle..."
+if ! command -v gradle &> /dev/null; then
+    echo "Gradle não encontrado. Gerando Gradle Wrapper..."
+    
+    # Criar diretórios necessários
+    echo "Criando diretórios necessários..."
+    mkdir -p gradle/wrapper
+    
+    # Baixar arquivos do Gradle Wrapper
+    echo "Baixando Gradle Wrapper..."
+    
+    curl -L -o gradlew https://raw.githubusercontent.com/gradle/gradle/master/gradlew
+    echo "Baixado gradlew"
+    
+    curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/master/gradle/wrapper/gradle-wrapper.jar
+    echo "Baixado gradle-wrapper.jar"
+    
+    # Criar arquivo gradle-wrapper.properties manualmente
+    echo "Criando arquivo de propriedades do wrapper..."
+    cat > gradle/wrapper/gradle-wrapper.properties << EOL
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\\://services.gradle.org/distributions/gradle-8.7-bin.zip
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+EOL
+    
+    # Configurar permissões
+    echo "Configurando permissões..."
+    chmod +x gradlew
+    
+    # Verificar se os arquivos essenciais foram criados
+    if [ ! -f "gradlew" ]; then
+        echo "ERRO: Falha ao criar gradlew"
+        exit 1
+    fi
+    
+    echo "Gradle Wrapper criado com sucesso."
+else
+    echo "Gradle encontrado. Verificando versão..."
+    gradle -v
 fi
-echo "Maven encontrado. Verificando versão..."
-mvn -version
 echo
 
 # Criar diretórios de log
@@ -35,9 +68,9 @@ mkdir -p logs
 echo "Diretório de logs criado."
 echo
 
-# Resolver dependências do Maven
+# Baixar dependências do projeto
 echo "Baixando dependências do projeto..."
-mvn dependency:resolve
+./gradlew dependencies --no-daemon
 if [ $? -ne 0 ]; then
     echo "Erro ao baixar dependências. Verifique sua conexão com a internet."
     exit 1
@@ -45,30 +78,14 @@ fi
 echo "Dependências baixadas com sucesso."
 echo
 
-# Gerar wrapper Maven
-echo "Gerando Maven Wrapper..."
-mvn wrapper:wrapper
-if [ $? -ne 0 ]; then
-    echo "Erro ao gerar Maven Wrapper."
-    exit 1
-fi
-echo "Maven Wrapper gerado com sucesso."
-echo
-
-# Tornar o wrapper executável
-echo "Tornando wrapper executável..."
-chmod +x mvnw
-echo "Wrapper executável configurado."
-echo
-
 echo "==================================================="
 echo " Ambiente configurado com sucesso!"
 echo "==================================================="
 echo
 echo "Para executar os testes, use:"
-echo "./mvnw clean test"
+echo "./gradlew clean test"
 echo
 echo "Para executar com um navegador específico:"
-echo "./mvnw clean test -Dbrowser=firefox"
-echo "./mvnw clean test -Dbrowser=chrome-headless"
+echo "./gradlew clean test -Dbrowser=firefox"
+echo "./gradlew clean test -Dbrowser=chrome-headless"
 echo 

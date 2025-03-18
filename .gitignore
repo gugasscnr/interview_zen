@@ -1,0 +1,38 @@
+# Arquivos e diretórios do Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Arquivos de build
+out/
+bin/
+target/
+
+# Arquivos de configuração de IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+.vscode/
+*.sublime-workspace
+
+# Arquivos de log
+logs/
+*.log
+
+# Outros arquivos temporários
+.DS_Store
+Thumbs.db
+.temp/
+tmp/
+
+# Relatórios de teste e cobertura
+test-output/
+reports/
+jacoco/
+allure-results/
+allure-report/

@@ -1,11 +1,11 @@
 # Testes Automatizados do Blog Agi
 
-Este projeto contém testes automatizados para validar o blog do Agi (https://blogdoagi.com.br/) utilizando Java, Selenium WebDriver, TestNG e Maven.
+Este projeto contém testes automatizados para validar o blog do Agi (https://blogdoagi.com.br/) utilizando Java, Selenium WebDriver, TestNG e Gradle.
 
 ## Requisitos
 
 - Java 11 ou superior
-- Maven 3.6 ou superior
+- Gradle 7.0 ou superior (opcional, o wrapper está incluído)
 - Navegadores: Chrome e/ou Firefox
 - Conexão com a Internet
 
@@ -18,6 +18,31 @@ Para facilitar a configuração do projeto, disponibilizamos scripts que verific
 # Execute o script de setup (abra o cmd como administrador)
 setup-windows.bat
 ```
+
+### Problemas conhecidos no Windows
+
+Se você encontrar problemas com o script de configuração, especialmente relacionados ao curl:
+
+1. **Script alternativo sem curl**: Execute `gerar-wrapper-alt.bat` para criar os arquivos do Gradle Wrapper sem usar curl
+   
+2. **Instalação manual do Gradle**:
+   - Baixe o Gradle do site oficial: https://gradle.org/releases/
+   - Extraia para uma pasta no seu computador (ex: `C:\Gradle\gradle-8.7`)
+   - Adicione a pasta bin ao seu PATH: `C:\Gradle\gradle-8.7\bin`
+   - Teste com o comando: `gradle -v`
+
+3. **Download manual dos arquivos do wrapper**:
+   - Crie a pasta `gradle/wrapper` no diretório do projeto
+   - Baixe o arquivo JAR: https://github.com/gradle/gradle/raw/master/gradle/wrapper/gradle-wrapper.jar
+   - Salve-o na pasta `gradle/wrapper`
+   - Crie manualmente o arquivo `gradle/wrapper/gradle-wrapper.properties` com o conteúdo:
+     ```
+     distributionBase=GRADLE_USER_HOME
+     distributionPath=wrapper/dists
+     distributionUrl=https\://services.gradle.org/distributions/gradle-8.7-bin.zip
+     zipStoreBase=GRADLE_USER_HOME
+     zipStorePath=wrapper/dists
+     ```
 
 ### Linux/macOS
 ```shell
@@ -73,37 +98,39 @@ source ~/.zshrc
 java -version
 ```
 
-### 2. Instalação do Maven
+### 2. Instalação do Gradle (Opcional)
+
+O projeto inclui um Gradle Wrapper (`gradlew`), então não é necessário instalar o Gradle. Porém, caso deseje instalar:
 
 #### Windows
-1. Acesse o site oficial do Maven: https://maven.apache.org/download.cgi
+1. Acesse o site oficial do Gradle: https://gradle.org/install/
 2. Baixe o arquivo binário (zip)
-3. Extraia o arquivo para um diretório de sua escolha (ex: `C:\Program Files\Apache\maven`)
-4. Configure as variáveis de ambiente no Windows:
-   - Adicione `MAVEN_HOME` apontando para o diretório onde o Maven foi extraído
-   - Adicione `%MAVEN_HOME%\bin` ao `Path`
+3. Extraia o arquivo para um diretório de sua escolha (ex: `C:\Gradle\gradle-8.7`)
+4. Configure as variáveis de ambiente:
+   - Adicione `GRADLE_HOME` apontando para o diretório onde o Gradle foi extraído
+   - Adicione `%GRADLE_HOME%\bin` ao `Path`
 5. Verifique a instalação abrindo o Prompt de Comando e digitando:
    ```
-   mvn -version
+   gradle -v
    ```
 
 #### Linux (Ubuntu/Debian)
 ```shell
-# Instale o Maven
+# Instale o Gradle
 sudo apt update
-sudo apt install maven
+sudo apt install gradle
 
 # Verifique a instalação
-mvn -version
+gradle -v
 ```
 
 #### macOS
 ```shell
 # Com Homebrew
-brew install maven
+brew install gradle
 
 # Verifique a instalação
-mvn -version
+gradle -v
 ```
 
 ### 3. Instalação dos Navegadores
@@ -127,15 +154,10 @@ cd <nome-do-diretorio>
 2. Verifique se todas as dependências foram baixadas corretamente:
 ```shell
 # No Windows
-mvn dependency:resolve
+gradlew dependencies
 
 # No Linux/macOS
-./mvnw dependency:resolve
-```
-
-3. Caso precise de um arquivo Maven Wrapper:
-```shell
-mvn wrapper:wrapper
+./gradlew dependencies
 ```
 
 ## Estrutura do Projeto
@@ -152,8 +174,6 @@ O projeto segue o padrão Page Object Model (POM) e está estruturado da seguint
 │   │                   └── pages
 │   │                       ├── BasePage.java        # Classe base com métodos comuns para as páginas
 │   │                       └── BlogPage.java        # Page Object para o Blog do Agi
-│   │               └── utils
-│   │                   └── TestData.java        # Dados de teste parametrizados
 │   └── test
 │       ├── java
 │       │   └── com
@@ -169,7 +189,8 @@ O projeto segue o padrão Page Object Model (POM) e está estruturado da seguint
 │           ├── log4j2.xml                           # Configuração de logging
 │           └── testng.xml                           # Configuração do TestNG
 ├── logs                                             # Diretório para logs de execução
-├── pom.xml                                          # Configuração do Maven e dependências
+├── build.gradle                                     # Configuração do Gradle e dependências
+├── settings.gradle                                  # Configuração do nome do projeto
 └── README.md                                        # Este arquivo
 ```
 
@@ -190,18 +211,15 @@ O projeto segue o padrão Page Object Model (POM) e está estruturado da seguint
 ### Windows
 
 ```shell
-# Execute os testes com Maven
-mvn clean test
+# Com Gradle Wrapper
+gradlew clean test
 ```
 
 ### Linux/macOS
 
 ```shell
-# Com Maven instalado
-mvn clean test
-
-# Com Maven Wrapper
-./mvnw clean test
+# Com Gradle Wrapper
+./gradlew clean test
 ```
 
 ### Executar com Navegador Específico
@@ -210,18 +228,18 @@ Por padrão, os testes são executados no Chrome. Para executar em outro navegad
 
 ```shell
 # Firefox
-mvn clean test -Dbrowser=firefox
+./gradlew clean test -Dbrowser=firefox
 
 # Chrome em modo headless (sem interface gráfica)
-mvn clean test -Dbrowser=chrome-headless
+./gradlew clean test -Dbrowser=chrome-headless
 ```
 
 ## Relatórios
 
 Após a execução, os relatórios podem ser encontrados em:
 
-- Relatório TestNG: `target/surefire-reports/index.html`
-- Relatório Allure: `target/allure-results`
+- Relatório TestNG: `build/reports/tests/test/index.html`
+- Relatório Allure: `build/allure-results`
 
 ### Configuração do Allure
 
@@ -256,9 +274,11 @@ brew install allure
 ### Gerando e Visualizando Relatórios Allure
 
 ```shell
-# Gere e abra o relatório
-allure generate target/allure-results -o target/allure-report --clean
-allure open target/allure-report
+# Gere o relatório
+allure generate build/allure-results -o build/allure-report --clean
+
+# Abra o relatório
+allure open build/allure-report
 ```
 
 ## Solução de Problemas
@@ -268,20 +288,13 @@ Encontrou algum problema na instalação ou execução? Consulte nosso guia de s
 
 ## CI/CD
 
-Este projeto inclui configuração para integração contínua utilizando GitHub Actions. A configuração pode ser encontrada no arquivo `.github/workflows/maven.yml`.
-
-### Configuração do GitHub Actions
-
-1. Faça o fork deste repositório para sua conta do GitHub
-2. Acesse a aba "Actions" no seu repositório
-3. O workflow será executado automaticamente em cada push para a branch main
-4. Os resultados dos testes e relatórios estarão disponíveis na seção "Artifacts" de cada execução
+Este projeto inclui configuração para integração contínua utilizando GitHub Actions. A configuração pode ser encontrada no arquivo `.github/workflows/gradle.yml`.
 
 ## Recursos Adicionais
 
 - [Documentação oficial do Selenium](https://www.selenium.dev/documentation/)
 - [Documentação do TestNG](https://testng.org/doc/)
-- [Documentação do Maven](https://maven.apache.org/guides/)
+- [Documentação do Gradle](https://docs.gradle.org/current/userguide/userguide.html)
 - [Documentação do Allure](https://docs.qameta.io/allure/)
 - [Documentação do WebDriverManager](https://github.com/bonigarcia/webdrivermanager)
 

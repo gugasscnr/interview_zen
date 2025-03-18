@@ -146,11 +146,19 @@ public void testParametrizado(String texto, int numero) {
 Execute os testes normalmente:
 
 ```shell
-mvn clean test
+# Windows
+gradlew clean test
+
+# Linux/macOS
+./gradlew clean test
 ```
 
 Ou execute apenas sua nova classe de teste:
 
 ```shell
-mvn clean test -Dtest=NovosTestes
+# Windows
+gradlew test --tests "com.test.agi.tests.NovosTestes"
+
+# Linux/macOS
+./gradlew test --tests "com.test.agi.tests.NovosTestes"
 ``` 
