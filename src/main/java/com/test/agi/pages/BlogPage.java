@@ -138,7 +138,7 @@ public class BlogPage extends BasePage {
     /**
      * Verifica se a mensagem de 'nenhum resultado' está presente
      */
-    @Step("Verificar se mensagem de 'nenhum resultado' está presente")
+    @Step("Verificar se retorna resultados aleatórios")
     public boolean isNoResultsMessagePresent() {
         try {
             if (isElementPresent(noResultsMessage)) {
