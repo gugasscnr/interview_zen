@@ -16,7 +16,7 @@ Para facilitar a configuração do projeto, disponibilizamos scripts que verific
 ### Windows
 ```shell
 # Execute o script de setup (abra o cmd como administrador)
-setup-windows.bat
+./setup-windows.bat
 ```
 
 ### Problemas conhecidos no Windows
@@ -194,19 +194,37 @@ O projeto segue o padrão Page Object Model (POM) e está estruturado da seguint
 └── README.md                                        # Este arquivo
 ```
 
+## Otimizações Implementadas
+
+O projeto implementa diversas otimizações para melhorar a performance e robustez dos testes:
+
+1. **Navegador único para todos os testes**
+   - Uma única instância do navegador é iniciada no início da suíte e reutilizada por todos os testes
+   - Cada teste navega para a URL base e limpa os cookies antes de executar
+   - O navegador é fechado apenas no final da suíte de testes
+
+2. **Esperas explícitas e implícitas**
+   - Esperas explícitas são usadas para elementos específicos
+   - Timeout padrão configurado para 20 segundos
+   - Evita-se o uso de Thread.sleep para maior estabilidade
+
+3. **Seletores CSS robustos**
+   - Seletores simplificados para maior estabilidade
+   - Evita-se seletores complexos e frágeis
+
+4. **Logging detalhado**
+   - Registro detalhado de cada ação
+   - Screenshots automáticos em caso de falha
+   - Integração com Allure para relatórios ricos
+
 ## Casos de Teste Implementados
 
 1. **Validação da Funcionalidade de Busca**
-   - Pesquisa por termos válidos (poupança, investimento, crédito)
-   - Verifica se os resultados contêm o termo pesquisado
-   - Valida a filtragem de artigos irrelevantes
+   - Pesquisa por termos válidos como "consignado", "empréstimo", "cartão de crédito" e "financiamento"
+   - Verifica se os resultados contêm o termo pesquisado no título ou conteúdo
+   - Valida o comportamento da página com diferentes termos de busca
 
-2. **Tratamento de Inputs Inválidos**
-   - Pesquisa com campo vazio
-   - Pesquisa com caracteres especiais
-   - Validação de mensagens de erro/retorno adequadas
-
-## Como Executar os Testes
+## Como Executar os Testes (Utilizando o ./setup-windows.bat você terá oportunidade de já executar os testes caso queira)
 
 ### Windows
 
@@ -224,15 +242,21 @@ gradlew clean test
 
 ### Executar com Navegador Específico
 
-Por padrão, os testes são executados no Chrome. Para executar em outro navegador:
+Por padrão, os testes são executados no Chrome conforme definido no arquivo `testng.xml`. Para alterar o navegador:
 
-```shell
-# Firefox
-./gradlew clean test -Dbrowser=firefox
+1. Modifique o parâmetro no arquivo `src/test/resources/testng.xml`:
+   ```xml
+   <parameter name="browser" value="firefox" />
+   ```
 
-# Chrome em modo headless (sem interface gráfica)
-./gradlew clean test -Dbrowser=chrome-headless
-```
+2. Ou use a linha de comando:
+   ```shell
+   # Firefox
+   ./gradlew clean test -Dbrowser=firefox
+
+   # Chrome em modo headless (sem interface gráfica)
+   ./gradlew clean test -Dbrowser=chrome-headless
+   ```
 
 ## Relatórios
 
@@ -280,6 +304,13 @@ allure generate build/allure-results -o build/allure-report --clean
 # Abra o relatório
 allure open build/allure-report
 ```
+
+## Tempo de Execução
+
+Com a otimização de uma única instância do navegador, o tempo de execução dos testes foi significativamente reduzido:
+
+- **Antes**: Aproximadamente 40-43 segundos por teste (com inicialização do navegador a cada teste)
+- **Depois**: Tempo total reduzido, apenas um navegador é inicializado para toda a suíte
 
 ## Solução de Problemas
 
