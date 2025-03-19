@@ -42,7 +42,7 @@ jobs:
     
     - name: Publicar resultados dos testes
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: test-reports
         path: |
@@ -65,7 +65,7 @@ jobs:
     
     steps:
     - name: Download dos relatórios
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v2
       with:
         name: test-reports
         path: reports
