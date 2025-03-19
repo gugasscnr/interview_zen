@@ -6,6 +6,7 @@ import com.test.agi.utils.TestData;
 import io.qameta.allure.Description;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Step;
 import io.qameta.allure.Story;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -28,44 +29,56 @@ public class BuscaTests extends BaseTest {
         
         try {
             BlogPage blogPage = new BlogPage(driver);
-            blogPage.searchFor(termo);
+            // Realizar busca
+            realizarBuscaComTermo(blogPage, termo);
             
-            // Se não houver resultados, não falhe imediatamente
-            int resultCount = blogPage.getSearchResultCount();
-            logger.info("Número de resultados encontrados: {}", resultCount);
-            
-            if (resultCount == 0) {
-                logger.warn("Nenhum resultado foi encontrado para o termo: {}. Isso pode ser normal.", termo);
-                // Verifique se a mensagem de nenhum resultado está presente em vez de falhar o teste
-                boolean hasNoResultsMessage = blogPage.isNoResultsMessagePresent();
-                logger.info("Mensagem de 'nenhum resultado' presente: {}", hasNoResultsMessage);
-                
-                // O teste está buscando por "consignado", então esperamos encontrar resultados
-                // Se não encontrar, falha o teste
-                Assert.fail("Era esperado encontrar resultados para o termo '" + termo + "', mas nenhum foi encontrado.");
-            } else {
-                // Verifica se os resultados contêm o termo pesquisado
-                boolean hasResultsWithTerm = blogPage.resultsContainTerm(termo);
-                logger.info("Resultados contêm o termo buscado: {}", hasResultsWithTerm);
-                
-                Assert.assertTrue(hasResultsWithTerm, 
-                        "Os resultados não contêm o termo pesquisado: " + termo);
-                
-                // Verificar o título da página de resultados
-                String infoResultados = blogPage.getSearchResultsInfo();
-                logger.info("Título da página de resultados: {}", infoResultados);
-                
-                // Verificamos se o título da página contém alguma indicação de resultados
-                Assert.assertTrue(
-                    infoResultados.toLowerCase().contains("resultado") || 
-                    infoResultados.toLowerCase().contains("pesquisa") || 
-                    infoResultados.toLowerCase().contains(termo.toLowerCase()), 
-                    "O título da página não indica que são resultados de busca ou não contém o termo buscado"
-                );
-            }
+            // Verificar resultados
+            verificarResultadosParaTermoEspecifico(blogPage, termo);
         } catch (Exception e) {
             logger.error("Erro durante o teste de busca para o termo '{}': {}", termo, e.getMessage());
             Assert.fail("Erro durante teste: " + e.getMessage());
+        }
+    }
+    
+    @Step("Realizar busca por termo específico: {termo}")
+    private void realizarBuscaComTermo(BlogPage blogPage, String termo) {
+        blogPage.searchFor(termo);
+    }
+    
+    @Step("Validar resultados de busca para o termo: {termo}")
+    private void verificarResultadosParaTermoEspecifico(BlogPage blogPage, String termo) {
+        // Se não houver resultados, não falhe imediatamente
+        int resultCount = blogPage.getSearchResultCount();
+        logger.info("Número de resultados encontrados: {}", resultCount);
+        
+        if (resultCount == 0) {
+            logger.warn("Nenhum resultado foi encontrado para o termo: {}. Isso pode ser normal.", termo);
+            // Verifique se a mensagem de nenhum resultado está presente em vez de falhar o teste
+            boolean hasNoResultsMessage = blogPage.isNoResultsMessagePresent();
+            logger.info("Mensagem de 'nenhum resultado' presente: {}", hasNoResultsMessage);
+            
+            // O teste está buscando por "consignado", então esperamos encontrar resultados
+            // Se não encontrar, falha o teste
+            Assert.fail("Era esperado encontrar resultados para o termo '" + termo + "', mas nenhum foi encontrado.");
+        } else {
+            // Verifica se os resultados contêm o termo pesquisado
+            boolean hasResultsWithTerm = blogPage.resultsContainTerm(termo);
+            logger.info("Resultados contêm o termo buscado: {}", hasResultsWithTerm);
+            
+            Assert.assertTrue(hasResultsWithTerm, 
+                    "Os resultados não contêm o termo pesquisado: " + termo);
+            
+            // Verificar o título da página de resultados
+            String infoResultados = blogPage.getSearchResultsInfo();
+            logger.info("Título da página de resultados: {}", infoResultados);
+            
+            // Verificamos se o título da página contém alguma indicação de resultados
+            Assert.assertTrue(
+                infoResultados.toLowerCase().contains("resultado") || 
+                infoResultados.toLowerCase().contains("pesquisa") || 
+                infoResultados.toLowerCase().contains(termo.toLowerCase()), 
+                "O título da página não indica que são resultados de busca ou não contém o termo buscado"
+            );
         }
     }
     
@@ -81,8 +94,20 @@ public class BuscaTests extends BaseTest {
         logger.info("Iniciando teste de busca sem termo específico");
         
         BlogPage blogPage = new BlogPage(driver);
-        blogPage.searchFor(""); // Busca vazia
+        // Realizar busca vazia
+        realizarBuscaVazia(blogPage);
         
+        // Verificar se retorna conteúdo padrão
+        verificarConteudoPadrao(blogPage);
+    }
+    
+    @Step("Realizar busca vazia no blog")
+    private void realizarBuscaVazia(BlogPage blogPage) {
+        blogPage.searchFor(""); // Busca vazia
+    }
+    
+    @Step("Verificar se busca vazia retorna conteúdo padrão do blog")
+    private void verificarConteudoPadrao(BlogPage blogPage) {
         // Verificar se há resultados
         int resultCount = blogPage.getSearchResultCount();
         logger.info("Número de resultados encontrados para busca vazia: {}", resultCount);

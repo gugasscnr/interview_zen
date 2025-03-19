@@ -57,6 +57,24 @@ O Allure Framework oferece relatórios detalhados que incluem:
 - Estatísticas de execução
 - Categorização de falhas
 
+### Descrições claras de passos
+
+Os testes foram organizados com descrições semânticas claras dos passos executados:
+
+**Teste 1: Busca por termo específico**
+- "Realizar busca por termo específico: consignado"
+- "Contar quantidade de artigos encontrados na busca"
+- "Verificar se os artigos encontrados contêm o termo: consignado"
+- "Capturar título da página de resultados"
+- "Validar resultados de busca para o termo: consignado"
+
+**Teste 2: Busca sem termo**
+- "Realizar busca vazia no blog"
+- "Contar quantidade de artigos encontrados na busca"
+- "Verificar se mensagem de 'nenhum resultado' está presente"
+- "Extrair títulos dos artigos encontrados"
+- "Verificar se busca vazia retorna conteúdo padrão do blog"
+
 ## ✏️ Modificando os testes
 
 ### Adicionando novos termos de busca

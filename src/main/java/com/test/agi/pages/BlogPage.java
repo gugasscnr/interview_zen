@@ -28,7 +28,7 @@ public class BlogPage extends BasePage {
     /**
      * Realiza uma pesquisa com o termo especificado
      */
-    @Step("Realizar pesquisa com o termo: {searchTerm}")
+    @Step("Realizar busca no blog com o termo: {searchTerm}")
     public BlogPage searchFor(String searchTerm) {
         try {
             // Navegar diretamente para a página de busca
@@ -72,7 +72,7 @@ public class BlogPage extends BasePage {
     /**
      * Navega diretamente para a página de busca
      */
-    @Step("Navegar diretamente para a página de busca")
+    @Step("Acessar página de busca do blog")
     public BlogPage navigateToSearchPage() {
         driver.get("https://blogdoagi.com.br/?s=");
         waitForPageLoad();
@@ -82,7 +82,7 @@ public class BlogPage extends BasePage {
     /**
      * Verifica se os resultados da pesquisa contêm o termo pesquisado
      */
-    @Step("Verificar se os resultados contêm o termo: {searchTerm}")
+    @Step("Verificar se os artigos encontrados contêm o termo: {searchTerm}")
     public boolean resultsContainTerm(String searchTerm) {
         try {
             // Verificar se o título da página de resultados contém o termo
@@ -130,7 +130,7 @@ public class BlogPage extends BasePage {
     /**
      * Obtém o número de resultados da pesquisa
      */
-    @Step("Obter número de resultados da pesquisa")
+    @Step("Contar quantidade de artigos encontrados na busca")
     public int getSearchResultCount() {
         return getElements(searchResults).size();
     }
@@ -138,7 +138,7 @@ public class BlogPage extends BasePage {
     /**
      * Verifica se a mensagem de 'nenhum resultado' está presente
      */
-    @Step("Verificar se retorna resultados aleatórios")
+    @Step("Verificar se mensagem de 'nenhum resultado' está presente")
     public boolean isNoResultsMessagePresent() {
         try {
             if (isElementPresent(noResultsMessage)) {
@@ -164,7 +164,7 @@ public class BlogPage extends BasePage {
     /**
      * Obtém o texto da mensagem de informação dos resultados da pesquisa
      */
-    @Step("Obter texto da informação dos resultados da pesquisa")
+    @Step("Capturar título da página de resultados")
     public String getSearchResultsInfo() {
         if (isElementPresent(searchResultsInfo)) {
             return getElementText(searchResultsInfo);
@@ -175,7 +175,7 @@ public class BlogPage extends BasePage {
     /**
      * Obtém os títulos dos resultados da pesquisa
      */
-    @Step("Obter títulos dos resultados da pesquisa")
+    @Step("Extrair títulos dos artigos encontrados")
     public List<String> getSearchResultTitles() {
         List<WebElement> elements = getElements(searchResultTitles);
         List<String> titles = new ArrayList<>();
