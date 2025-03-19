@@ -2,7 +2,6 @@ package com.test.agi.pages;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,14 +12,14 @@ import java.util.List;
 
 public class BlogPage extends BasePage {
     
-    // Locators atualizado com múltiplas alternativas para maior robustez
-    private final By searchIcon = By.cssSelector("span[class='ast-icon icon-search icon-search'] span[class='ahfb-svg-iconset ast-inline-flex svg-baseline'] svg");
+    // Locators melhorados para maior robustez
+    private final By searchIcon = By.cssSelector(".ast-icon.icon-search");
     private final By searchInput = By.cssSelector("#search-field");
-    private final By searchResults = By.cssSelector("article.ast-article-post, .post");
-    private final By searchResultTitles = By.cssSelector("body > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > main:nth-child(2) > div:nth-child(1) > article:nth-child(1) > div:nth-child(1) > div:nth-child(2) > h2:nth-child(1) > a:nth-child(1)");
+    private final By searchResults = By.cssSelector("article.ast-article-post");
+    private final By searchResultTitles = By.cssSelector("article .entry-title a");
     private final By searchResultExcerpts = By.cssSelector("article .entry-content");
-    private final By noResultsMessage = By.cssSelector("div[class='page-content'] p");
     private final By searchResultsInfo = By.cssSelector(".page-title.ast-archive-title");
+    private final By noResultsMessage = By.cssSelector("div.page-content p");
 
     public BlogPage(WebDriver driver) {
         super(driver);
@@ -142,11 +141,8 @@ public class BlogPage extends BasePage {
     @Step("Verificar se a mensagem de 'nenhum resultado' está presente")
     public boolean isNoResultsMessagePresent() {
         try {
-            // Verificar a mensagem usando o seletor CSS preciso
-            By mensagemNoResults = By.cssSelector("div[class='page-content'] p");
-            
-            if (isElementPresent(mensagemNoResults)) {
-                String messageText = getElementText(mensagemNoResults);
+            if (isElementPresent(noResultsMessage)) {
+                String messageText = getElementText(noResultsMessage);
                 logger.info("Mensagem encontrada: '{}'", messageText);
                 
                 // Texto exato que deve aparecer na mensagem de "nenhum resultado"
@@ -189,28 +185,5 @@ public class BlogPage extends BasePage {
         }
         
         return titles;
-    }
-
-    /**
-     * Verifica se um termo específico NÃO está presente nos resultados
-     */
-    @Step("Verificar se o termo '{term}' NÃO está presente nos resultados")
-    public boolean resultsDoNotContainTerm(String term) {
-        List<WebElement> titles = getElements(searchResultTitles);
-        List<WebElement> excerpts = getElements(searchResultExcerpts);
-        
-        for (WebElement title : titles) {
-            if (title.getText().toLowerCase().contains(term.toLowerCase())) {
-                return false;
-            }
-        }
-        
-        for (WebElement excerpt : excerpts) {
-            if (excerpt.getText().toLowerCase().contains(term.toLowerCase())) {
-                return false;
-            }
-        }
-        
-        return true;
     }
 } 

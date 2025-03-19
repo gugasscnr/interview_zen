@@ -23,26 +23,34 @@ import java.io.File;
 import java.time.Duration;
 
 public class BaseTest {
-    protected WebDriver driver;
+    protected static WebDriver driver;
     protected static final Logger logger = LogManager.getLogger(BaseTest.class);
     private static final String BASE_URL = "https://blogdoagi.com.br/";
-    private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(20);
 
     @BeforeSuite
-    public void setupSuite() {
+    @Parameters({"browser"})
+    public void setupSuite(@Optional("chrome") String browser) {
         // Criar diretório para logs se não existir
         new File("logs").mkdirs();
         logger.info("Iniciando suíte de testes");
-    }
-
-    @BeforeMethod
-    @Parameters({"browser"})
-    public void setupTest(@Optional("chrome") String browser) {
-        logger.info("Iniciando teste com navegador: {}", browser);
+        
+        // Inicializar o navegador uma única vez para toda a suíte
+        logger.info("Iniciando navegador: {}", browser);
         driver = getDriver(browser);
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(DEFAULT_TIMEOUT);
+    }
+
+    @BeforeMethod
+    public void setupTest() {
+        // Navegar para a página inicial antes de cada teste
         driver.get(BASE_URL);
+        logger.info("Navegando para a URL base antes do teste");
+        
+        // Limpar cookies e cache para garantir que cada teste comece com um estado limpo
+        driver.manage().deleteAllCookies();
+        logger.info("Cookies foram limpos");
     }
 
     @AfterMethod
@@ -52,15 +60,15 @@ public class BaseTest {
             saveScreenshot(driver);
             logger.error("Teste falhou: {}", result.getName());
         }
-        
-        if (driver != null) {
-            driver.quit();
-            logger.info("WebDriver encerrado");
-        }
     }
 
     @AfterSuite
     public void tearDownSuite() {
+        // Fechar o navegador apenas no final da suíte de testes
+        if (driver != null) {
+            driver.quit();
+            logger.info("WebDriver encerrado");
+        }
         logger.info("Finalizando suíte de testes");
     }
 

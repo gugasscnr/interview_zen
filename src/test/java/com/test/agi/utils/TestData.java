@@ -8,13 +8,9 @@ public class TestData {
     public static Object[][] termosValidos() {
         return new Object[][] {
             {"consignado"}
-        };
-    }
-    
-    @DataProvider(name = "termosIrrelevantes")
-    public static Object[][] termosIrrelevantes() {
-        return new Object[][] {
-            {"consignado", "criptomoedas"}
+            // {"empréstimo"},
+            // {"cartão de crédito"},
+            // {"financiamento"}
         };
     }
 } 

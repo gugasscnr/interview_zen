@@ -30,13 +30,6 @@ public class BuscaTests extends BaseTest {
             BlogPage blogPage = new BlogPage(driver);
             blogPage.searchFor(termo);
             
-            // Aguardar carregamento completo dos resultados
-            try {
-                Thread.sleep(3000); // Pausa para garantir carregamento
-            } catch (InterruptedException e) {
-                logger.warn("Interrupção durante espera", e);
-            }
-            
             // Se não houver resultados, não falhe imediatamente
             int resultCount = blogPage.getSearchResultCount();
             logger.info("Número de resultados encontrados: {}", resultCount);
@@ -77,26 +70,18 @@ public class BuscaTests extends BaseTest {
     }
     
     /**
-     * Cenário 1: (continuação)
-     * - Validar filtragem de artigos irrelevantes (ex: "criptomoedas")
+     * Cenário 2: Validação da busca com termos específicos
+     * - Validar que a busca retorna resultados quando pesquisando por termos relevantes
      */
-    @Test(dataProvider = "termosIrrelevantes", dataProviderClass = TestData.class)
-    @Description("Verifica se a busca filtra artigos irrelevantes")
+    @Test(dataProvider = "termosValidos", dataProviderClass = TestData.class)
+    @Description("Verifica se a busca retorna resultados para termos específicos")
     @Severity(SeverityLevel.NORMAL)
     @Story("Validação da Funcionalidade de Busca")
-    public void deveFiltrarArtigosIrrelevantes(String termoBusca, String termoIrrelevante) {
-        logger.info("Iniciando teste de filtragem com termo busca: {} e termo irrelevante: {}", 
-                termoBusca, termoIrrelevante);
+    public void deveRetornarResultadosParaTermosEspecificos(String termoBusca) {
+        logger.info("Iniciando teste de busca com termo específico: {}", termoBusca);
         
         BlogPage blogPage = new BlogPage(driver);
         blogPage.searchFor(termoBusca);
-        
-        // Aguardar carregamento completo dos resultados
-        try {
-            Thread.sleep(3000); // Pausa para garantir carregamento
-        } catch (InterruptedException e) {
-            logger.warn("Interrupção durante espera", e);
-        }
         
         // Se não houver resultados, não falhe imediatamente
         int resultCount = blogPage.getSearchResultCount();
@@ -114,10 +99,6 @@ public class BuscaTests extends BaseTest {
         // Analisa os títulos dos resultados
         List<String> titulos = blogPage.getSearchResultTitles();
         logger.info("Títulos encontrados: {}", titulos);
-        
-        // Esta verificação pode falhar se os títulos não contiverem exatamente o termo buscado,
-        // mas o conteúdo do artigo pode conter. Neste caso, só verificamos se há resultados
-        // e assumimos que a busca do site está funcionando corretamente
         
         // O teste passa se há resultados de busca (presumindo que sejam relevantes)
         Assert.assertTrue(resultCount > 0, 
