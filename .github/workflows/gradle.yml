@@ -31,7 +31,7 @@ jobs:
       run: chmod +x ./gradlew
     
     - name: Executar testes
-      run: ./gradlew test -Dbrowser=chrome-headless
+      run: ./gradlew test allureReport -Dbrowser=chrome-headless
     
     - name: Gerar relatório Allure
       if: always()

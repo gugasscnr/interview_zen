@@ -2,6 +2,10 @@
 <suite name="BlogAgiTestSuite" verbose="1">
     <parameter name="browser" value="chrome" />
     
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg" />
+    </listeners>
+    
     <test name="BuscaTests">
         <classes>
             <class name="com.test.agi.tests.BuscaTests"/>
