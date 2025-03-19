@@ -305,6 +305,45 @@ allure generate build/allure-results -o build/allure-report --clean
 allure open build/allure-report
 ```
 
+## Integração Contínua (CI/CD)
+
+Este projeto está configurado para usar GitHub Actions para integração contínua. Cada vez que um novo código é enviado para as branches `main` ou `master`, ou quando um pull request é criado para essas branches, os testes são executados automaticamente.
+
+### Recursos do GitHub Actions
+
+1. **Execução automática de testes**
+   - Os testes são executados em um ambiente Ubuntu Linux
+   - Chrome é usado em modo headless para os testes
+
+2. **Geração de relatórios**
+   - Relatórios TestNG são gerados automaticamente
+   - Relatórios Allure são criados após cada execução
+
+3. **Publicação de resultados**
+   - Os relatórios são publicados como artefatos do GitHub Actions
+   - Relatórios Allure são publicados no GitHub Pages para fácil visualização
+
+### Visualizando os Resultados
+
+1. **Artefatos**
+   - Acesse a aba "Actions" no GitHub
+   - Clique na execução do workflow
+   - Na seção "Artifacts", você encontrará os relatórios para download
+
+2. **GitHub Pages (Relatório Allure)**
+   - Após a execução bem-sucedida do workflow
+   - Acesse o URL fornecido no ambiente "github-pages" 
+   - Ou navegue para `https://[seu-usuario-ou-organizacao].github.io/[nome-do-repositorio]/`
+
+### Executando o Workflow Manualmente
+
+Você também pode iniciar a execução dos testes manualmente:
+
+1. Acesse a aba "Actions" no GitHub
+2. Selecione o workflow "Testes Automatizados Blog Agi"
+3. Clique no botão "Run workflow"
+4. Selecione a branch e clique em "Run workflow"
+
 ## Tempo de Execução
 
 Com a otimização de uma única instância do navegador, o tempo de execução dos testes foi significativamente reduzido:
