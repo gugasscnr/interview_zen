@@ -1,201 +1,63 @@
-# Testes Automatizados do Blog Agi
+# Testes Automatizados Blog Agi
 
-Este projeto contém testes automatizados para validar o blog do Agi (https://blogdoagi.com.br/) utilizando Java, Selenium WebDriver, TestNG e Gradle.
+Este repositório contém testes automatizados para o Blog da Agi, verificando a funcionalidade de busca.
 
-## Requisitos
+## O que é testado
 
-- Java 11 ou superior
-- Gradle 7.0 ou superior (opcional, o wrapper está incluído)
-- Navegadores: Chrome e/ou Firefox
-- Conexão com a Internet
+1. **Busca por termo específico** - Verifica se a busca por "consignado" retorna resultados relevantes
+2. **Busca sem termo** - Verifica se ao realizar uma busca sem fornecer termo, são exibidos assuntos aleatórios
 
-## Índice
-- [Windows](#windows)
-- [Linux](#linux)
-- [macOS](#macos)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Casos de Teste](#casos-de-teste)
-- [Integração Contínua (CI/CD)](#integração-contínua-cicd)
-- [Solução de Problemas](#solução-de-problemas)
+## Como executar os testes via GitHub Actions
 
-## Windows
+### Passo 1: Faça um fork do repositório
+- Acesse o repositório original no GitHub
+- Clique no botão "Fork" no canto superior direito
+- Aguarde a criação da cópia no seu perfil
 
-### Instalação no Windows
+### Passo 2: Habilite o GitHub Actions
+- Acesse seu fork do repositório
+- Clique na aba "Actions"
+- Se aparecer um aviso de workflows desabilitados, clique em "I understand my workflows, go ahead and enable them"
 
-1. **Instalação rápida com script**
-   ```shell
-   # Execute o script de setup (abra o cmd como administrador)
-   ./setup-windows.bat
-   ```
+### Passo 3: Execute os testes
+- Na aba "Actions", localize o workflow "Testes Automatizados Blog Agi"
+- Clique no botão "Run workflow" (botão azul com seta para baixo)
+- Mantenha a branch "main" selecionada e clique em "Run workflow"
 
-2. **Instalação manual**
-   - Instale o JDK 11+ e configure `JAVA_HOME` nas variáveis de ambiente
-   - Instale o Chrome e/ou Firefox
-   - O Gradle Wrapper está incluído no projeto
+### Passo 4: Aguarde a execução
+- O workflow possui duas etapas: execução dos testes e publicação do relatório
+- Aguarde até que ambas as etapas sejam concluídas (círculos verdes)
 
-### Executando Testes no Windows
+### Passo 5: Acesse o relatório de testes
+- Após a conclusão, clique no job "publish-report"
+- No final da execução, você encontrará uma URL para o GitHub Pages
+- A URL será similar a: `https://seu-usuario.github.io/interview_zen/`
+- Clique nesse link para visualizar o relatório Allure
 
-```shell
-# Execução padrão com Chrome
-gradlew clean test
+## Modificando os testes
 
-# Com Firefox
-gradlew clean test -Dbrowser=firefox
-
-# Com Chrome em modo headless
-gradlew clean test -Dbrowser=chrome-headless
+### Adicionando novos termos de busca
+Edite o arquivo `src/test/java/com/test/agi/utils/TestData.java` e adicione ou descomente os termos desejados:
+```java
+@DataProvider(name = "termosValidos")
+public static Object[][] termosValidos() {
+    return new Object[][] {
+        {"consignado"},
+        {"empréstimo"},
+        {"cartão de crédito"},
+        {"financiamento"}
+    };
+}
 ```
 
-### Relatórios no Windows
+### Adicionando novos cenários de teste
+1. Crie um novo método de teste na classe `BuscaTests.java`
+2. Utilize as anotações Allure para documentação (@Description, @Severity, @Story)
+3. Implemente a lógica de teste usando a classe `BlogPage`
 
-1. **Acessando relatórios gerados**
-   - TestNG: Abra `build/reports/tests/test/index.html` no navegador
-   
-2. **Gerando relatórios Allure**
-   ```shell
-   # Instale o Allure via Scoop
-   scoop install allure
+## Solução de problemas
 
-   # Gere e abra o relatório
-   allure generate build/allure-results -o build/allure-report --clean
-   allure open build/allure-report
-   ```
-
-## Linux
-
-### Instalação no Linux
-
-1. **Instalação rápida com script**
-   ```shell
-   # Dê permissão de execução e execute o script
-   chmod +x setup-linux.sh
-   ./setup-linux.sh
-   ```
-
-2. **Instalação manual**
-   ```shell
-   # Instale o OpenJDK 11
-   sudo apt update
-   sudo apt install openjdk-11-jdk
-   
-   # Instale o Chrome
-   wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-   sudo apt install ./google-chrome-stable_current_amd64.deb
-   ```
-
-### Executando Testes no Linux
-
-```shell
-# Execução padrão com Chrome
-./gradlew clean test
-
-# Com Firefox
-./gradlew clean test -Dbrowser=firefox
-
-# Com Chrome em modo headless
-./gradlew clean test -Dbrowser=chrome-headless
-```
-
-### Relatórios no Linux
-
-1. **Acessando relatórios gerados**
-   - TestNG: Abra `build/reports/tests/test/index.html` no navegador
-   
-2. **Gerando relatórios Allure**
-   ```shell
-   # Instale o Allure
-   sudo apt-add-repository ppa:qameta/allure
-   sudo apt-get update
-   sudo apt-get install allure
-
-   # Gere e abra o relatório
-   allure generate build/allure-results -o build/allure-report --clean
-   allure open build/allure-report
-   ```
-
-## macOS
-
-### Instalação no macOS
-
-1. **Instalação com Homebrew**
-   ```shell
-   # Instale o Java 11
-   brew install openjdk@11
-   
-   # Configure variáveis de ambiente
-   echo 'export JAVA_HOME=$(/usr/libexec/java_home -v 11)' >> ~/.zshrc
-   echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.zshrc
-   source ~/.zshrc
-   
-   # Instale o Chrome
-   brew install --cask google-chrome
-   ```
-
-### Executando Testes no macOS
-
-```shell
-# Execução padrão com Chrome
-./gradlew clean test
-
-# Com Firefox
-./gradlew clean test -Dbrowser=firefox
-
-# Com Chrome em modo headless
-./gradlew clean test -Dbrowser=chrome-headless
-```
-
-### Relatórios no macOS
-
-1. **Acessando relatórios gerados**
-   - TestNG: Abra `build/reports/tests/test/index.html` no navegador
-   
-2. **Gerando relatórios Allure**
-   ```shell
-   # Instale o Allure
-   brew install allure
-
-   # Gere e abra o relatório
-   allure generate build/allure-results -o build/allure-report --clean
-   allure open build/allure-report
-   ```
-
-## Estrutura do Projeto
-
-O projeto segue o padrão Page Object Model (POM) com as seguintes otimizações:
-
-- **Navegador único para todos os testes**: Uma única instância do navegador é reutilizada
-- **Esperas explícitas**: Timeout padrão configurado para 20 segundos
-- **Seletores CSS robustos**: Evita problemas com mudanças no layout do site
-
-```
-├── src/main/java/.../pages     # Contém os Page Objects (BasePage.java, BlogPage.java)
-├── src/test/java/.../config    # Configuração dos testes (BaseTest.java)
-├── src/test/java/.../tests     # Casos de teste (BuscaTests.java)
-├── src/test/java/.../utils     # Utilitários e dados de teste (TestData.java)
-├── src/test/resources          # Configurações do TestNG e logging
-```
-
-## Casos de Teste
-
-- **Funcionalidade de Busca**: Pesquisa por termos como "consignado", "empréstimo", etc.
-- Verifica se os resultados contêm o termo pesquisado no título ou conteúdo
-
-## Integração Contínua (CI/CD)
-
-Este projeto está configurado com GitHub Actions para execução automática dos testes.
-
-### Recursos do GitHub Actions
-
-- **Execução automática**: Em push/PR para branches main/master
-- **Relatórios**: Publicados como artefatos e no GitHub Pages
-- **Execução manual**: Disponível através da aba Actions no GitHub
-
-### Visualizando os Resultados
-
-1. Acesse a aba "Actions" no GitHub
-2. Veja os artefatos gerados ou acesse o link do GitHub Pages
-
-## Solução de Problemas
-
-Encontrou algum problema? Consulte o guia [Problemas Comuns e Soluções](PROBLEMAS-COMUNS.md)
-
+Se o GitHub Actions falhar, verifique:
+1. Se as GitHub Pages estão habilitadas (Settings > Pages > Source: GitHub Actions)
+2. Se o fork está atualizado com o repositório original
+3. Se não existem problemas com permissões no repositório
