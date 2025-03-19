@@ -1,13 +1,26 @@
 # Testes Automatizados Blog Agi
 
-Este repositório contém testes automatizados para o Blog da Agi, verificando a funcionalidade de busca.
+Este repositório contém testes automatizados para o Blog da Agi, verificando a funcionalidade de busca utilizando práticas modernas de automação de testes.
 
-## O que é testado
+## 🔍 O que é testado
 
 1. **Busca por termo específico** - Verifica se a busca por "consignado" retorna resultados relevantes
 2. **Busca sem termo** - Verifica se ao realizar uma busca sem fornecer termo, são exibidos assuntos aleatórios
 
-## Como executar os testes via GitHub Actions
+## 🛠️ Tecnologias Utilizadas
+
+Este projeto utiliza um conjunto moderno de tecnologias para automação de testes:
+
+- **Java 11** - Linguagem de programação base
+- **Selenium WebDriver 4.18.1** - Framework para automação de navegadores
+- **TestNG 7.9.0** - Framework de execução e organização de testes
+- **Allure 2.22.0** - Geração de relatórios detalhados e visuais
+- **Gradle** - Gerenciamento de dependências e automação de build
+- **WebDriverManager 5.7.0** - Gerenciamento automático de drivers de navegadores
+- **GitHub Actions** - Integração contínua e execução automatizada de testes
+- **GitHub Pages** - Hospedagem dos relatórios de teste
+
+## 🚀 Como executar os testes via GitHub Actions
 
 ### Passo 1: Faça um fork do repositório
 - Acesse o repositório original no GitHub
@@ -29,12 +42,22 @@ Este repositório contém testes automatizados para o Blog da Agi, verificando a
 - Aguarde até que ambas as etapas sejam concluídas (círculos verdes)
 
 ### Passo 5: Acesse o relatório de testes
-- Após a conclusão, clique no job "publish-report"
-- No final da execução, você encontrará uma URL para o GitHub Pages
+- Após a conclusão, acesse a aba "Actions" e clique na execução mais recente
+- No job "publish-report", você encontrará um link para o GitHub Pages
 - A URL será similar a: `https://seu-usuario.github.io/interview_zen/`
 - Clique nesse link para visualizar o relatório Allure
 
-## Modificando os testes
+## 📊 Relatório Allure
+
+O Allure Framework oferece relatórios detalhados que incluem:
+- Gráficos de execução e status dos testes
+- Timeline de execução
+- Capturas de tela em caso de falhas
+- Logs detalhados
+- Estatísticas de execução
+- Categorização de falhas
+
+## ✏️ Modificando os testes
 
 ### Adicionando novos termos de busca
 Edite o arquivo `src/test/java/com/test/agi/utils/TestData.java` e adicione ou descomente os termos desejados:
@@ -55,9 +78,30 @@ public static Object[][] termosValidos() {
 2. Utilize as anotações Allure para documentação (@Description, @Severity, @Story)
 3. Implemente a lógica de teste usando a classe `BlogPage`
 
-## Solução de problemas
+## 📂 Estrutura do Projeto
+
+O projeto segue o padrão Page Object Model (POM):
+
+```
+src/
+├── main/java/         - Classes principais
+└── test/
+    ├── java/
+    │   └── com/test/agi/
+    │       ├── config/    - Configurações (WebDriver, ambiente)
+    │       ├── pages/     - Page Objects (representações das páginas)
+    │       ├── tests/     - Classes de teste
+    │       └── utils/     - Classes utilitárias e dados de teste
+    └── resources/     - Arquivos de configuração
+```
+
+## ⚠️ Solução de problemas
 
 Se o GitHub Actions falhar, verifique:
 1. Se as GitHub Pages estão habilitadas (Settings > Pages > Source: GitHub Actions)
 2. Se o fork está atualizado com o repositório original
 3. Se não existem problemas com permissões no repositório
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT.
