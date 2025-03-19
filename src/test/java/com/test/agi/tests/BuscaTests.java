@@ -70,40 +70,38 @@ public class BuscaTests extends BaseTest {
     }
     
     /**
-     * Cenário 2: Validação da busca com termos específicos
-     * - Validar que a busca retorna resultados quando pesquisando por termos relevantes
+     * Cenário 2: Validação da busca sem termo específico
+     * - Validar que a busca retorna resultados aleatórios quando nenhum termo é fornecido
      */
-    @Test(dataProvider = "termosValidos", dataProviderClass = TestData.class)
-    @Description("Verifica se a busca retorna resultados para termos específicos")
+    @Test
+    @Description("Verifica se a busca retorna assuntos aleatórios quando nenhum termo é fornecido")
     @Severity(SeverityLevel.NORMAL)
     @Story("Validação da Funcionalidade de Busca")
-    public void deveRetornarResultadosParaTermosEspecificos(String termoBusca) {
-        logger.info("Iniciando teste de busca com termo específico: {}", termoBusca);
+    public void deveMostrarAssuntosAleatoriosQuandoNenhumTermoFornecido() {
+        logger.info("Iniciando teste de busca sem termo específico");
         
         BlogPage blogPage = new BlogPage(driver);
-        blogPage.searchFor(termoBusca);
+        blogPage.searchFor(""); // Busca vazia
         
-        // Se não houver resultados, não falhe imediatamente
+        // Verificar se há resultados
         int resultCount = blogPage.getSearchResultCount();
-        logger.info("Número de resultados encontrados: {}", resultCount);
+        logger.info("Número de resultados encontrados para busca vazia: {}", resultCount);
         
-        if (resultCount == 0) {
-            logger.warn("Nenhum resultado foi encontrado para o termo: {}. Isso pode ser normal.", termoBusca);
-            // Verifique se a mensagem de nenhum resultado está presente em vez de falhar o teste
-            Assert.assertTrue(blogPage.isNoResultsMessagePresent(), 
-                    "Nenhum resultado encontrado e mensagem de 'nenhum resultado' não foi exibida");
-            // Teste passa se não houver resultados, pois não há como verificar a filtragem
-            return;
-        }
+        // A busca vazia deve retornar resultados e não deve mostrar mensagem de "nenhum resultado"
+        Assert.assertTrue(resultCount > 0, 
+                "A busca sem termo específico deveria mostrar assuntos aleatórios, mas não retornou resultados");
         
-        // Analisa os títulos dos resultados
+        Assert.assertFalse(blogPage.isNoResultsMessagePresent(),
+                "A busca sem termo específico mostrou mensagem de 'nenhum resultado', quando deveria mostrar assuntos aleatórios");
+        
+        // Analisa os títulos dos resultados para verificar diversidade
         List<String> titulos = blogPage.getSearchResultTitles();
         logger.info("Títulos encontrados: {}", titulos);
         
-        // O teste passa se há resultados de busca (presumindo que sejam relevantes)
-        Assert.assertTrue(resultCount > 0, 
-                "Nenhum resultado encontrado para o termo: " + termoBusca);
+        // Verificar se há pelo menos um título exibido
+        Assert.assertFalse(titulos.isEmpty(), 
+                "A busca sem termo específico não retornou nenhum título de resultado");
         
-        logger.info("Encontrados {} resultados para o termo: {}", resultCount, termoBusca);
+        logger.info("Encontrados {} resultados para busca sem termo específico", resultCount);
     }
 } 
